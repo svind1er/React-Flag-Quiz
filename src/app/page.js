@@ -71,7 +71,6 @@ export default function Home() {
 
         const savedLimitedHighScore = Cookies.get("limitedHighScore");
         setLimitedHighScore(savedLimitedHighScore ? parseInt(savedLimitedHighScore) : 0);
-
     };
 
     const startNewRound = () => {
@@ -92,7 +91,6 @@ export default function Home() {
     };
 
     const handleButtonClick = async (countryName) => {
-
         const isCorrect = countryName === selectedCountry.name;
         const newScore = isCorrect ? score + 1 : 0;
 
@@ -156,7 +154,6 @@ export default function Home() {
         ? countries.filter(country => !limitedUsedFlags.includes(country.name)).length
         : null;
 
-
     return (
         <div className="flex flex-col items-center py-8 space-y-6 min-h-screen">
 
@@ -189,11 +186,25 @@ export default function Home() {
                 {shuffled.map((country, index) => {
                     const isCorrect = result.clicked === country.name && result.clicked === selectedCountry.name;
                     const isWrong = result.clicked === country.name && result.clicked !== selectedCountry.name;
-                    const buttonColor = isCorrect
-                        ? "bg-green-500 hover:bg-green-600 text-white"
-                        : isWrong
-                        ? "bg-red-500 hover:bg-red-600 text-white"
-                        : "bg-white hover:bg-blue-500 text-black";
+                    const isCorrectAnswer = country.name === selectedCountry.name;
+                    const isSelected = result.clicked === country.name;
+
+
+                    let buttonColor = "bg-white hover:bg-blue-500 text-black";
+
+
+                    if (result.clicked) {
+                        if (isCorrect) {
+                            buttonColor = "bg-green-500 hover:bg-green-600 text-white";
+                        } else if (isWrong) {
+                            buttonColor = "bg-red-500 hover:bg-red-600 text-white";
+                        }
+                    }
+
+
+                    if (!isSelected && isCorrectAnswer && result.clicked) {
+                        buttonColor = "bg-green-500 hover:bg-green-600 text-white";
+                    }
 
                     return (
                         <button
@@ -206,6 +217,7 @@ export default function Home() {
                     );
                 })}
             </div>
+
 
             {/* Game Mode Buttons */}
             <div className="flex gap-4">
