@@ -6,6 +6,7 @@ export default function Results() {
     const [correctCounts, setCorrectCounts] = useState({});
     const [wrongCounts, setWrongCounts] = useState({});
     const [gradient, setGradient] = useState("linear-gradient(135deg, #222, #444)");
+    const [history, setHistory] = useState([]); // Ensure this is initialized as an array
 
     useEffect(() => {
         let hue = 0;
@@ -22,6 +23,14 @@ export default function Results() {
         socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
             setLatestUpdate(data);
+
+            const newHistoryEntry = {
+                guess: data.guess,
+                correctAnswer: data.correctAnswer,
+                isCorrect: data.isCorrect,
+                score: data.currentScore
+            };
+            setHistory((prevHistory) => [newHistoryEntry, ...prevHistory]);
 
             if (data.isCorrect) {
                 setCorrectCounts((prev) => ({
@@ -87,6 +96,23 @@ export default function Results() {
                 <div className="bg-gray-800 p-6 rounded-lg shadow-md flex-1 text-center">
                     <h2 className="text-2xl font-semibold">Limited Highscore</h2>
                     <p className="text-4xl font-bold mt-2">{latestUpdate?.limitedHighScore || "..."}</p>
+                </div>
+            </div>
+
+            {/* History Section */}
+            <div className="mt-8 w-full max-w-6xl">
+                <h2 className="text-2xl font-semibold mb-4">Guess History</h2>
+                <div className="bg-gray-800 p-6 rounded-lg shadow-md space-y-4">
+                    {Array.isArray(history) && history.map((entry, index) => (
+                        <div key={index} className="bg-gray-700 p-4 rounded">
+                            <p><strong>Guess:</strong> {entry.guess}</p>
+                            <p><strong>Correct Answer:</strong> {entry.correctAnswer}</p>
+                            <p className={entry.isCorrect ? "text-green-400" : "text-red-400"}>
+                                {entry.isCorrect ? "✅ Correct!" : "❌ Wrong!"}
+                            </p>
+                            <p><strong>Score:</strong> {entry.score}</p>
+                        </div>
+                    ))}
                 </div>
             </div>
         </div>

@@ -53,7 +53,6 @@ export default function Home() {
 
     useEffect(() => {
         if (gameMode === "limited") {
-            console.log("Limited Mode: Using limitedUsedFlags:", limitedUsedFlags);
             Cookies.set("limitedUsedFlags", JSON.stringify(limitedUsedFlags), { expires: 365 });
             setTimeout(() => {
                 startNewRound();
@@ -64,7 +63,6 @@ export default function Home() {
     const loadScores = () => {
         const savedScore = Cookies.get(`${gameMode}Score`);
         const savedHighScore = Cookies.get(`${gameMode}HighScore`);
-        console.log("Loaded scores:", { savedScore, savedHighScore });
         setScore(savedScore ? parseInt(savedScore) : 0);
         setHighScore(savedHighScore ? parseInt(savedHighScore) : 0);
 
@@ -77,37 +75,26 @@ export default function Home() {
     };
 
     const startNewRound = () => {
-        console.log("Starting new round...");
         let availableCountries = [...countries];
 
         if (gameMode === "limited") {
-            console.log("Limited mode active, filtering countries...");
             availableCountries = availableCountries.filter(c => !limitedUsedFlags.includes(c.name));
 
-            console.log("Available countries after filter:", availableCountries);
-
             if (availableCountries.length < 4) {
-                console.log("Less than 4 countries left, resetting used flags...");
                 setLimitedUsedFlags([]);
                 availableCountries = [...countries];
             }
         }
 
         const shuffled = randomize(availableCountries).slice(0, 4);
-        console.log("Shuffled countries for this round:", shuffled);
         setShuffled(shuffled);
         setSelectedCountry(shuffled[getRandomInt(4)]);
     };
 
     const handleButtonClick = async (countryName) => {
-        console.log("Button clicked with country:", countryName);
-        console.log("Selected country is:", selectedCountry.name);
 
         const isCorrect = countryName === selectedCountry.name;
         const newScore = isCorrect ? score + 1 : 0;
-
-        console.log("Is the guess correct?", isCorrect);
-        console.log("New score:", newScore);
 
         const guessData = {
             guess: countryName,
@@ -124,16 +111,13 @@ export default function Home() {
         Cookies.set(`${gameMode}Score`, newScore, { expires: 365 });
 
         if (isCorrect && newScore > highScore) {
-            console.log("New high score reached!");
             setHighScore(newScore);
             Cookies.set(`${gameMode}HighScore`, newScore, { expires: 365 });
         }
 
         if (gameMode === "limited" && isCorrect) {
-            console.log("Correct guess, marking country as used:", selectedCountry.name);
             setLimitedUsedFlags(prevFlags => [...prevFlags, selectedCountry.name]);
         } else if (!isCorrect && gameMode === "limited") {
-            console.log("Incorrect guess, resetting used flags...");
             setLimitedUsedFlags([]);
         }
 
@@ -143,7 +127,6 @@ export default function Home() {
         }
 
         setResult({ clicked: countryName, correct: selectedCountry.name });
-        console.log("Sending guess data:", guessData);
 
         if (socket.readyState === WebSocket.OPEN) {
             socket.send(JSON.stringify(guessData));
@@ -173,7 +156,6 @@ export default function Home() {
         ? countries.filter(country => !limitedUsedFlags.includes(country.name)).length
         : null;
 
-    console.log("Remaining countries in limited mode:", remainingCountries);
 
     return (
         <div className="flex flex-col items-center py-8 space-y-6 min-h-screen">
@@ -182,7 +164,7 @@ export default function Home() {
             <div className="mb-6">
                 {selectedCountry && (
                     <img
-                        src={`/flags/${selectedCountry.flag}`} // Assuming flags are named after the country
+                        src={`/flags/${selectedCountry.flag}`}
                         alt={selectedCountry.name}
                         className="w-86 h-48 border-2 border-white-300 rounded-xl"
                     />
