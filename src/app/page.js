@@ -59,7 +59,7 @@ export default function Home() {
             Cookies.set("limitedUsedFlags", JSON.stringify(limitedUsedFlags), { expires: 365 });
             setTimeout(() => {
                 startNewRound();
-            }, 1000);
+            }, 600);
         }
     }, [limitedUsedFlags]);
 
@@ -159,7 +159,7 @@ export default function Home() {
             if (gameMode === "unlimited") {
                 startNewRound();
             }
-        }, 1000);
+        }, 600);
     };
 
     const remainingCountries = gameMode === "limited"
