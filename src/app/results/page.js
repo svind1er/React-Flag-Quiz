@@ -6,7 +6,7 @@ export default function Results() {
     const [correctCounts, setCorrectCounts] = useState({});
     const [wrongCounts, setWrongCounts] = useState({});
     const [gradient, setGradient] = useState("linear-gradient(135deg, #222, #444)");
-    const [history, setHistory] = useState([]); // Ensure this is initialized as an array
+    const [history, setHistory] = useState([]);
 
     useEffect(() => {
         let hue = 0;
@@ -57,7 +57,7 @@ export default function Results() {
 
             <div className="grid grid-cols-3 gap-6 w-full max-w-6xl">
                 <div className="bg-gray-800 p-6 rounded-lg shadow-md">
-                    <h2 className="text-2xl font-semibold mb-4">Latest Guess</h2>
+                    <h2 className="text-2xl font-semibold mb-4 text-center">Latest Guess</h2>
                     <p className={latestUpdate?.isCorrect ? "text-green-400" : "text-red-400"}>
                         {latestUpdate ? (latestUpdate.isCorrect ? "✅ Correct!" : "❌ Wrong!") : "Waiting..."}
                     </p>
@@ -68,7 +68,7 @@ export default function Results() {
                 </div>
 
                 <div className="bg-gray-800 p-6 rounded-lg shadow-md">
-                    <h2 className="text-2xl font-semibold mb-4">Top 3 Correct</h2>
+                    <h2 className="text-2xl font-semibold mb-4 text-center">Top 3 Correct</h2>
                     {getTopThree(correctCounts).map(([country, count]) => (
                         <div key={country} className="flex justify-between bg-gray-700 p-2 my-2 rounded">
                             <span>{country}</span>
@@ -78,7 +78,7 @@ export default function Results() {
                 </div>
 
                 <div className="bg-gray-800 p-6 rounded-lg shadow-md">
-                    <h2 className="text-2xl font-semibold mb-4">Top 3 Wrong</h2>
+                    <h2 className="text-2xl font-semibold mb-4 text-center">Top 3 Wrong</h2>
                     {getTopThree(wrongCounts).map(([country, count]) => (
                         <div key={country} className="flex justify-between bg-gray-700 p-2 my-2 rounded">
                             <span>{country}</span>
@@ -99,14 +99,38 @@ export default function Results() {
                 </div>
             </div>
 
+            {/* Total Correct and Total Wrong*/}
+            <div className="grid grid-cols-2 gap-6 w-full max-w-6xl mt-8">
+                <div className="bg-gray-800 p-6 rounded-lg shadow-md flex-1 text-center">
+                    <h2 className="text-2xl font-semibold">Total Correct</h2>
+                    <p className="text-4xl font-bold mt-2">{latestUpdate?.totalCorrect}</p>
+                </div>
+                <div className="bg-gray-800 p-6 rounded-lg shadow-md flex-1 text-center">
+                    <h2 className="text-2xl font-semibold">Total Wrong</h2>
+                    <p className="text-4xl font-bold mt-2">{latestUpdate?.totalWrong}</p>
+                </div>
+            </div>
+
             {/* History Section */}
             <div className="mt-8 w-full max-w-6xl">
-                <h2 className="text-2xl font-semibold mb-4">Guess History</h2>
                 <div className="bg-gray-800 p-6 rounded-lg shadow-md space-y-4">
+                    <h2 className="text-2xl font-semibold mb-4 text-center">Guess History</h2>
                     {Array.isArray(history) && history.map((entry, index) => (
                         <div key={index} className="bg-gray-700 p-4 rounded">
                             <p><strong>Guess:</strong> {entry.guess}</p>
                             <p><strong>Correct Answer:</strong> {entry.correctAnswer}</p>
+
+                            {/* Display all choices */}
+                            <p><strong>Choices:</strong></p>
+                            <div className="grid grid-cols-2 gap-4">
+                                {latestUpdate.shuffled.map((country, idx) => (
+                                    <div key={idx} className="bg-gray-600 p-2 rounded text-center">
+                                        <p>{country.name}</p> {/* Show the country's name */}
+                                        <img src={`/flags/${country.flag}`} alt={country.name} className="w-12 h-8 mx-auto" /> {/* Show flag */}
+                                    </div>
+                                ))}
+                            </div>
+
                             <p className={entry.isCorrect ? "text-green-400" : "text-red-400"}>
                                 {entry.isCorrect ? "✅ Correct!" : "❌ Wrong!"}
                             </p>

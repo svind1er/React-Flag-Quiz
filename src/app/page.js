@@ -30,6 +30,9 @@ export default function Home() {
     const [limitedUsedFlags, setLimitedUsedFlags] = useState([]);
     const [socket, setSocket] = useState(null);
 
+    const [totalCorrect, setTotalCorrect] = useState(0);
+    const [totalWrong, setTotalWrong] = useState(0);
+
     useEffect(() => {
         const newSocket = new WebSocket("ws://ed93-51-175-242-128.ngrok-free.app");
         setSocket(newSocket);
@@ -94,6 +97,12 @@ export default function Home() {
         const isCorrect = countryName === selectedCountry.name;
         const newScore = isCorrect ? score + 1 : 0;
 
+        if (isCorrect) {
+            setTotalCorrect(prev => prev + 1);
+        } else {
+            setTotalWrong(prev => prev + 1);
+        }
+
         const guessData = {
             guess: countryName,
             correctAnswer: selectedCountry.name,
@@ -102,7 +111,10 @@ export default function Home() {
             limitedHighScore,
             unlimitedHighScore,
             gameMode,
-            limitedUsedFlags
+            limitedUsedFlags,
+            totalCorrect,
+            totalWrong,
+            shuffled
         };
 
         setScore(newScore);
@@ -156,6 +168,7 @@ export default function Home() {
 
     return (
         <div className="flex flex-col items-center py-8 space-y-6 min-h-screen">
+            <h1 className="text-3xl font-bold">{gameMode}</h1>
 
             {/* Display Flag */}
             <div className="mb-6">
