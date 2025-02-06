@@ -33,8 +33,11 @@ export default function Home() {
     const [totalCorrect, setTotalCorrect] = useState(0);
     const [totalWrong, setTotalWrong] = useState(0);
 
+    const WEB_SOCKET_URL = "ws://";
+    const guessTracker = "PLACEHOLDER URL" + "/track-guess";
+
     useEffect(() => {
-        const newSocket = new WebSocket("ws://ed93-51-175-242-128.ngrok-free.app");
+        const newSocket = new WebSocket(WEB_SOCKET_URL);
         setSocket(newSocket);
 
         return () => {
@@ -143,7 +146,7 @@ export default function Home() {
         }
 
         try {
-            await fetch("https://ed93-51-175-242-128.ngrok-free.app/track-guess", {
+            await fetch(guessTracker, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -208,16 +211,16 @@ export default function Home() {
 
                     if (result.clicked) {
                         if (isCorrect) {
-                            buttonColor = "bg-green-500 hover:bg-green-600 text-white";
+                            // buttonColor = "bg-green-500 hover:bg-green-600 text-white";
                         } else if (isWrong) {
                             buttonColor = "bg-red-500 hover:bg-red-600 text-white";
                         }
                     }
 
-
                     if (!isSelected && isCorrectAnswer && result.clicked) {
                         buttonColor = "bg-green-500 hover:bg-green-600 text-white";
                     }
+
 
                     return (
                         <button

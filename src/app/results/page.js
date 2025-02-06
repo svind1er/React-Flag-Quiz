@@ -8,6 +8,9 @@ export default function Results() {
     const [gradient, setGradient] = useState("linear-gradient(135deg, #222, #444)");
     const [history, setHistory] = useState([]);
 
+    // ngrok URL
+    const WEB_SOCKET_URL = "ws://PLACEHOLDER";
+
     useEffect(() => {
         let hue = 0;
         const interval = setInterval(() => {
@@ -18,7 +21,7 @@ export default function Results() {
     }, []);
 
     useEffect(() => {
-        const socket = new WebSocket("ws://ed93-51-175-242-128.ngrok-free.app");
+        const socket = new WebSocket(WEB_SOCKET_URL);
 
         socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
